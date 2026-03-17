@@ -1,0 +1,175 @@
+<div class="app-shell">
+  <!-- Top Navigation Bar -->
+  <header class="top-nav">
+    <div class="top-nav-left">
+      <div class="brand-logo">
+        <span class="brand-icon">📺</span>
+        <div class="brand-text">
+          <span class="brand-main">COMCAST</span>
+          <span class="brand-sub">ADVERTISING</span>
+        </div>
+      </div>
+      <div class="proposal-banner">
+        <span class="banner-dot"></span>
+        Need to build a proposal? <a href="#" class="banner-link">Show me how!</a>
+      </div>
+    </div>
+    <div class="top-nav-right">
+      <button class="btn-new-proposal">NEW PROPOSAL</button>
+      <div class="user-info">
+        <div class="user-name">Nithin Rajan</div>
+        <div class="user-role">AAd_UP_AccountExecutive</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main-layout">
+    <!-- Left Sidebar Icons -->
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <a class="nav-icon" title="Home" routerLink="/orders">
+          <i class="pi pi-home"></i>
+        </a>
+        <a class="nav-icon" title="Orders" routerLink="/orders">
+          <i class="pi pi-file"></i>
+        </a>
+        <a class="nav-icon active" title="Create">
+          <i class="pi pi-pencil"></i>
+        </a>
+        <a class="nav-icon" title="Analytics">
+          <i class="pi pi-chart-line"></i>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Create Proposal Panel -->
+    <aside class="create-panel">
+      <h3 class="create-panel-title">Create Proposal</h3>
+
+      <div class="form-field">
+        <label class="field-label">PROPOSAL NAME</label>
+        <input
+          pInputText
+          type="text"
+          placeholder="Enter Proposal name"
+          [(ngModel)]="proposalName"
+          class="field-input"
+        />
+      </div>
+
+      <div class="form-field">
+        <label class="field-label">ACCOUNT EXECUTIVE</label>
+        <p-select
+          [options]="accountExecutives"
+          [(ngModel)]="selectedAE"
+          optionLabel="label"
+          optionValue="value"
+          styleClass="field-select"
+        />
+      </div>
+
+      <div class="form-field">
+        <label class="field-label">
+          ADVERTISER NAME
+          <span class="info-icon" title="The advertiser for this proposal">?</span>
+        </label>
+        <input
+          pInputText
+          type="text"
+          placeholder="Advertiser Name"
+          [(ngModel)]="advertiserName"
+          class="field-input"
+        />
+      </div>
+
+      <div class="form-field">
+        <label class="field-label">AGENCY</label>
+        <span class="agency-value">{{ agency }}</span>
+      </div>
+
+      <div class="panel-divider"></div>
+
+      <!-- Step Navigation -->
+      <div class="step-nav">
+        <div class="step-item step-active">
+          <i class="pi pi-chevron-down step-icon"></i>
+          <span class="step-label">General</span>
+        </div>
+        <div class="step-sub-item">Atlanta</div>
+        <div class="step-item">
+          <i class="pi pi-chevron-right step-icon"></i>
+          <span class="step-label">Order Summary</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content: General Page -->
+    <main class="main-content">
+      <h2 class="page-title">General</h2>
+
+      <!-- Campaign Duration -->
+      <section class="content-section">
+        <h4 class="section-title">Campaign Duration</h4>
+        <div class="date-row">
+          <p-datepicker
+            [(ngModel)]="startDate"
+            placeholder="Start Date"
+            styleClass="cp-date-picker"
+            [showIcon]="true"
+            dateFormat="mm/dd/yy"
+          />
+          <p-datepicker
+            [(ngModel)]="endDate"
+            placeholder="End Date"
+            styleClass="cp-date-picker"
+            [showIcon]="true"
+            dateFormat="mm/dd/yy"
+          />
+        </div>
+      </section>
+
+      <!-- Inventory Type -->
+      <section class="content-section">
+        <h4 class="section-title">Inventory Type</h4>
+        <div class="inventory-list">
+          @for (item of inventoryTypes; track item.key) {
+            <div class="inventory-item">
+              <p-checkbox
+                [(ngModel)]="selectedInventory"
+                [value]="item.key"
+                [inputId]="item.key"
+              />
+              <label [for]="item.key" class="inventory-label">
+                {{ item.label }}
+                @if (item.hasInfo) {
+                  <span class="info-badge" title="More information">?</span>
+                }
+              </label>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Market -->
+      <section class="content-section">
+        <h4 class="section-title">
+          Market
+          <span class="info-icon ms-1" title="Geographic market">?</span>
+        </h4>
+        <div class="market-chips">
+          @for (market of markets(); track market) {
+            <span class="market-chip">
+              {{ market }}
+              <button class="chip-remove" (click)="removeMarket(market)" aria-label="Remove market">✕</button>
+            </span>
+          }
+        </div>
+      </section>
+
+      <!-- Footer Actions -->
+      <div class="page-footer">
+        <button class="btn-next" (click)="onNext()">NEXT</button>
+      </div>
+    </main>
+  </div>
+</div>

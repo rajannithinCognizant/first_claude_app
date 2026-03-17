@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd \"C:\\\\Users\\\\2222205\\\\first_claude_app\\\\ist-to-est-converter\" && curl -s https://api.github.com/repos/rajannithinCognizant/first_claude_app | grep -E '\"default_branch\"|\"name\"' | head -5)"
+    ]
+  }
+}

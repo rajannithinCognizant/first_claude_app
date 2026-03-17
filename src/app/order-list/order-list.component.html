@@ -1,0 +1,253 @@
+<div class="app-shell">
+  <!-- Top Navigation Bar -->
+  <header class="top-nav">
+    <div class="top-nav-left">
+      <div class="brand-logo">
+        <span class="brand-icon">📺</span>
+        <div class="brand-text">
+          <span class="brand-main">COMCAST</span>
+          <span class="brand-sub">ADVERTISING</span>
+        </div>
+      </div>
+      <div class="proposal-banner">
+        <span class="banner-dot"></span>
+        Need to build a proposal? <a href="#" class="banner-link">Show me how!</a>
+      </div>
+    </div>
+    <div class="top-nav-right">
+      <button class="btn-new-proposal" routerLink="/proposals/create">NEW PROPOSAL</button>
+      <div class="user-info">
+        <div class="user-name">Nithin Rajan</div>
+        <div class="user-role">AAd_UP_AccountExecutive</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main-layout">
+    <!-- Left Sidebar -->
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <a class="nav-icon active" title="Home" routerLink="/orders">
+          <i class="pi pi-home"></i>
+        </a>
+        <a class="nav-icon" title="Orders" routerLink="/orders">
+          <i class="pi pi-file"></i>
+        </a>
+        <a class="nav-icon" title="Edit">
+          <i class="pi pi-pencil"></i>
+        </a>
+        <a class="nav-icon" title="Analytics">
+          <i class="pi pi-chart-line"></i>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Page Header -->
+      <div class="page-header d-flex align-items-center gap-3 mb-3">
+        <h2 class="page-title mb-0">Order List</h2>
+        <div class="header-controls d-flex align-items-center gap-2 ms-3">
+          <p-select
+            [options]="ownerOptions"
+            [(ngModel)]="selectedOwner"
+            optionLabel="label"
+            optionValue="value"
+            styleClass="owner-select"
+          />
+          <input
+            pInputText
+            type="text"
+            class="name-input"
+            [(ngModel)]="searchName"
+            placeholder="Name"
+          />
+          <button class="btn-go" (click)="onGo()">GO</button>
+        </div>
+      </div>
+
+      <!-- Filters Row -->
+      <div class="filters-row d-flex align-items-center gap-3 mb-3">
+        <p-iconfield>
+          <p-inputicon styleClass="pi pi-search" />
+          <input
+            pInputText
+            type="text"
+            placeholder="Search"
+            class="search-input"
+            [value]="searchQuery()"
+            (input)="searchQuery.set($any($event.target).value)"
+          />
+        </p-iconfield>
+
+        <span class="filters-label">
+          <i class="pi pi-sliders-h me-1"></i> FILTERS
+        </span>
+
+        <div class="date-fields d-flex align-items-center gap-2">
+          <p-datepicker
+            [(ngModel)]="startDate"
+            placeholder="Start Date"
+            styleClass="date-picker"
+            [showIcon]="true"
+            dateFormat="mm/dd/yy"
+          />
+          <p-datepicker
+            [(ngModel)]="endDate"
+            placeholder="End Date"
+            styleClass="date-picker"
+            [showIcon]="true"
+            dateFormat="mm/dd/yy"
+          />
+        </div>
+
+        <button class="btn-export ms-auto" (click)="onExport()">
+          EXPORT ORDER LIST
+        </button>
+      </div>
+
+      <!-- Results Count -->
+      <div class="results-count mb-2">
+        {{ (currentPage() * rowsPerPage()) + 1 }} - {{ Math.min((currentPage() + 1) * rowsPerPage(), totalRecords()) }}
+        of {{ totalRecords() }} Results for <strong>Mike Anthony</strong>
+      </div>
+
+      <!-- Orders Table -->
+      <p-table
+        [value]="paginatedOrders()"
+        styleClass="order-table"
+        [tableStyle]="{'min-width': '60rem'}"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 2.5rem"></th>
+            <th>ORDER NAME</th>
+            <th>ADVERTISER</th>
+            <th>AGENCY</th>
+            <th>MARKET</th>
+            <th>CAMPAIGN DURATION</th>
+            <th>BUDGET</th>
+            <th>STATUS</th>
+            <th style="width: 3rem"></th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-order>
+          <!-- Main Order Row -->
+          <tr class="order-row" [class.row-expanded]="isExpanded(order.id)">
+            <td>
+              <button
+                class="btn-expand"
+                (click)="toggleRow(order.id)"
+                [attr.aria-expanded]="isExpanded(order.id)"
+                [title]="isExpanded(order.id) ? 'Collapse' : 'Expand'"
+              >
+                <i class="pi" [ngClass]="isExpanded(order.id) ? 'pi-chevron-up' : 'pi-chevron-down'"></i>
+              </button>
+            </td>
+            <td class="order-name">{{ order.orderName }}</td>
+            <td>{{ order.advertiser }}</td>
+            <td>{{ order.agency }}</td>
+            <td>{{ order.market }}</td>
+            <td class="campaign-duration">{{ order.campaignStart }} - {{ order.campaignEnd }}</td>
+            <td class="budget">$ {{ order.budget | number:'1.2-2' }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="getStatusClass(order.status)">
+                {{ getStatusLabel(order.status) }}
+              </span>
+            </td>
+            <td>
+              <button class="btn-menu">
+                <i class="pi pi-ellipsis-v"></i>
+              </button>
+            </td>
+          </tr>
+
+          <!-- Expansion Detail Row -->
+          @if (isExpanded(order.id)) {
+            @if (getDetail(order.id); as detail) {
+              <tr class="expansion-row">
+                <td colspan="9" class="expansion-cell">
+                  <!-- Order Metadata -->
+                  <div class="detail-metadata">
+                    <div class="meta-field">
+                      <span class="meta-label">Order ID</span>
+                      <span class="meta-value">{{ detail.orderId }}</span>
+                    </div>
+                    <div class="meta-field">
+                      <span class="meta-label">Account Executive</span>
+                      <span class="meta-value">{{ detail.accountExecutive }}</span>
+                    </div>
+                    <div class="meta-field">
+                      <span class="meta-label">Created By</span>
+                      <span class="meta-value">{{ detail.createdBy }}</span>
+                    </div>
+                    <div class="meta-field">
+                      <span class="meta-label">Created on</span>
+                      <span class="meta-value">{{ detail.createdOn }}</span>
+                    </div>
+                    <div class="meta-field">
+                      <span class="meta-label">Last Updated</span>
+                      <span class="meta-value">{{ detail.lastUpdated }}</span>
+                    </div>
+                    <div class="meta-field">
+                      <span class="meta-label">Impressions</span>
+                      <span class="meta-value">{{ detail.impressions | number }}</span>
+                    </div>
+                    <div class="meta-field">
+                      <span class="meta-label">CPM</span>
+                      <span class="meta-value">$ {{ detail.cpm | number:'1.2-2' }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Inventory Details -->
+                  <div class="inventory-section">
+                    <table class="inventory-table">
+                      <thead>
+                        <tr>
+                          <th class="inv-type-col"></th>
+                          <th>ID</th>
+                          <th>Budget</th>
+                          <th>CPM</th>
+                          <th>Impressions</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (item of detail.inventory; track item.id) {
+                          <tr>
+                            <td class="inv-type-col">
+                              <span class="inv-type">{{ item.type }}</span>
+                              <span class="inv-category">{{ item.category }}</span>
+                            </td>
+                            <td>{{ item.id }}</td>
+                            <td>$ {{ item.budget | number:'1.2-2' }}</td>
+                            <td>$ {{ item.cpm | number:'1.2-2' }}</td>
+                            <td>{{ item.impressions | number }}</td>
+                            <td>{{ item.status }}</td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+            }
+          }
+        </ng-template>
+      </p-table>
+
+      <!-- Pagination -->
+      <div class="pagination-row d-flex align-items-center justify-content-end mt-2">
+        <p-paginator
+          [rows]="rowsPerPage()"
+          [totalRecords]="totalRecords()"
+          [first]="currentPage() * rowsPerPage()"
+          [rowsPerPageOptions]="[8, 16, 32]"
+          (onPageChange)="onPageChange($event)"
+          styleClass="order-paginator"
+        />
+      </div>
+    </main>
+  </div>
+</div>
